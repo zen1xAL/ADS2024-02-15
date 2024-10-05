@@ -47,16 +47,20 @@ import java.util.Scanner;
 
 
 public class C_EditDist {
+
+    // Сравнение символов двух строк
     int m(int i0, int j0, String s1, String s2){
         i0--;
         j0--;
         if (s1.charAt(i0) == s2.charAt(j0)){
-            return 0;
+            return 0; // Если символы равны, возвращаем 0
         }
         else{
-            return 1;
+            return 1; // Если символы различны, возвращаем 1
         }
     }
+
+    // Найти минимум из трех чисел
     int min(int n1, int n2, int n3){
         if (n1>n2){
             n1 = n2;
@@ -67,63 +71,67 @@ public class C_EditDist {
         return n1;
     }
 
+    // Вычисление расстояния Левенштейна итерационным способом и построение алгоритма преобразования
     String getDistanceEdinting(String one, String two) {
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     НАЧАЛО ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
-        int n = one.length();
-        int m = two.length();
-        int[][] matrix = new int[n+1][m+1];
+        int n = one.length(); // Длина первой строки
+        int m = two.length(); // Длина второй строки
+        int[][] matrix = new int[n+1][m+1]; // Матрица для хранения расстояний Левенштейна
+
+        // Инициализация матрицы
         for (int i = 0; i<=n; i++){
             for (int j = 0; j<=m; j++){
                 if ((i == 0) && (j == 0)){
-                    matrix[i][j] = 0;
+                    matrix[i][j] = 0; // Первый элемент матрицы равен 0
                 }
                 else if (j == 0){
-                    matrix[i][j] = i;
+                    matrix[i][j] = i; // Первый столбец матрицы заполняется индексами от 0 до n
                 }
                 else if (i == 0){
-                    matrix[i][j] = j;
+                    matrix[i][j] = j; // Первая строка матрицы заполняется индексами от 0 до m
                 }
                 else{
+                    // Вычисляем расстояние для текущего элемента матрицы
                     matrix[i][j] = min(matrix[i][j-1]+1, matrix[i-1][j]+1, matrix[i-1][j-1]+m(i, j, one, two));
                 }
-
             }
         }
 
-
+        // Строка для хранения редакционного предписания
         String result = "";
-        int i = n, j = m;
+        int i = n; // Индекс для первой строки
+        int j = m; // Индекс для второй строки
+
+        // Проход по матрице в обратном порядке для построения редакционного предписания
         while (i > 0 && j > 0) {
             if (one.charAt(i - 1) == two.charAt(j - 1)) {
-                result = "#" + ","+result;
+                result = "#" + "," + result; // Копирование
                 i--;
                 j--;
             } else if (matrix[i][j] == matrix[i - 1][j - 1] + 1) {
-                result = "~" + two.charAt(j - 1) + ","+result;
+                result = "~" + two.charAt(j - 1) + "," + result; // Замена
                 i--;
                 j--;
             } else if (matrix[i][j] == matrix[i - 1][j] + 1) {
-                result = "-" + one.charAt(i - 1) + ","+result;
+                result = "-" + one.charAt(i - 1) + "," + result; // Удаление
                 i--;
             } else if (matrix[i][j] == matrix[i][j - 1] + 1) {
-                result = "+" + two.charAt(j - 1) + ","+result;
+                result = "+" + two.charAt(j - 1) + "," + result; // Вставка
                 j--;
             }
         }
 
+        // Если остались символы в первой строке - удаляем их
         while (i > 0) {
-            result = "-" + one.charAt(i - 1) + ","+result;
+            result = "-" + one.charAt(i - 1) + "," + result;
             i--;
         }
 
+        // Если остались символы во второй строке - вставляем их
         while (j > 0) {
-            result = "+" + two.charAt(j - 1) + ","+result;
+            result = "+" + two.charAt(j - 1) + "," + result;
             j--;
         }
 
-
-
-        //!!!!!!!!!!!!!!!!!!!!!!!!!     КОНЕЦ ЗАДАЧИ     !!!!!!!!!!!!!!!!!!!!!!!!!
         return result;
     }
 
